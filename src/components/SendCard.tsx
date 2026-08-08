@@ -510,31 +510,7 @@ export default function SendCard() {
 
           {/* Sharing Tools */}
           <div className="w-full flex flex-col gap-3">
-            {/* Copy Link Row */}
-            <div className="flex items-center justify-between p-4 rounded-2xl glass-card">
-              <div className="overflow-hidden mr-3">
-                <span className="text-[10px] text-slate-400 block mb-0.5 font-bold uppercase tracking-wider">Direct Link</span>
-                <span className="text-xs text-slate-300 font-semibold font-mono truncate block max-w-[240px]">
-                  {getShareLink()}
-                </span>
-              </div>
-              <button
-                onClick={copyLinkToClipboard}
-                className="flex-shrink-0 h-10 px-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-xs font-bold text-slate-300 hover:text-white active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
-              >
-                {copiedLink ? (
-                  <>
-                    <CheckIcon className="text-xs text-emerald-500" />
-                    <span>Copied</span>
-                  </>
-                ) : (
-                  <>
-                    <ContentCopyIcon className="text-xs" />
-                    <span>Copy</span>
-                  </>
-                )}
-              </button>
-            </div>
+
 
             {/* QR Toggle Button */}
             <div className="w-full flex flex-col items-center">
