@@ -253,31 +253,31 @@ export default function ReceiveCard() {
   return (
     <div className="w-full flex flex-col items-center">
       {isDeleted ? (
-        <div className="w-full flex flex-col items-center py-6 text-center animate-fade-in">
-          <div className="w-16 h-16 rounded-2xl bg-indigo-955 bg-indigo-950/40 border border-indigo-900/40 flex items-center justify-center mb-6 shadow-inner animate-pulse">
-            <ShieldIcon className="text-3xl text-indigo-400" />
+        <div className="w-full flex flex-col items-center py-4 sm:py-6 text-center animate-fade-in">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-indigo-950/40 border border-indigo-900/40 flex items-center justify-center mb-5 sm:mb-6 shadow-inner animate-pulse">
+            <ShieldIcon className="text-2xl sm:text-3xl text-indigo-400" />
           </div>
-          <h3 className="text-base font-bold text-slate-100 mb-1.5">
+          <h3 className="text-sm sm:text-base font-bold text-slate-100 mb-1.5">
             Self-Destruct Triggered
           </h3>
-          <p className="text-xs text-slate-400 max-w-[280px] font-semibold leading-relaxed mb-8">
+          <p className="text-[11px] sm:text-xs text-slate-400 max-w-[280px] font-semibold leading-relaxed mb-6 sm:mb-8">
             Your files were downloaded successfully, and the transfer package has been permanently deleted from our server database.
           </p>
           <button
             onClick={resetReceive}
-            className="w-full max-w-xs h-12 rounded-2xl border border-slate-800 hover:border-slate-700 bg-slate-900/50 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white transition-all cursor-pointer"
+            className="w-full max-w-xs h-11 sm:h-12 rounded-2xl border border-slate-800 hover:border-slate-700 bg-slate-900/50 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white transition-all cursor-pointer"
           >
             Enter Another Code
           </button>
         </div>
       ) : !transfer ? (
         <form onSubmit={handleSubmit} className="w-full flex flex-col items-center animate-fade-in">
-          <p className="text-xs text-slate-400 text-center mb-6 max-w-xs font-semibold leading-relaxed">
+          <p className="text-[11px] sm:text-xs text-slate-400 text-center mb-5 sm:mb-6 max-w-xs font-semibold leading-relaxed">
             Enter the 6-digit key to retrieve the shared files.
           </p>
 
           {/* 6 Digit Inputs */}
-          <div className="flex gap-2 justify-center mb-6 w-full max-w-xs">
+          <div className="flex gap-1.5 sm:gap-2 justify-center mb-5 sm:mb-6 w-full max-w-xs">
             {code.map((char, index) => (
               <input
                 key={index}
@@ -292,37 +292,14 @@ export default function ReceiveCard() {
                 onKeyDown={(e) => handleKeyDown(e, index)}
                 onPaste={index === 0 ? handlePaste : undefined}
                 disabled={isLoading}
-                className="w-11 h-13.5 md:w-13 md:h-15.5 text-center text-2xl font-black font-mono bg-slate-900 rounded-2xl border border-slate-800 focus:bg-slate-950 focus:border-[#6366f1] focus:ring-1 focus:ring-[#6366f1]/50 focus:shadow-[0_0_15px_rgba(99,102,241,0.25)] outline-none text-white transition-all disabled:opacity-50 shadow-inner"
+                className="w-10 h-12 sm:w-11 sm:h-13.5 md:w-13 md:h-15.5 text-center text-xl sm:text-2xl font-black font-mono bg-slate-900 rounded-xl sm:rounded-2xl border border-slate-800 focus:bg-slate-950 focus:border-[#6366f1] focus:ring-1 focus:ring-[#6366f1]/50 focus:shadow-[0_0_15px_rgba(99,102,241,0.25)] outline-none text-white transition-all disabled:opacity-50 shadow-inner"
               />
             ))}
           </div>
 
-          {/* Help Info with Mock Codes */}
-          <div className="bg-slate-950 border border-slate-800/80 p-3 rounded-2xl mb-6 text-center max-w-xs w-full shadow-inner">
-            <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mb-1.5">
-              Try Demo Codes
-            </p>
-            <div className="flex justify-center gap-3 text-xs font-mono">
-              <button
-                type="button"
-                onClick={() => setCode("A1B2C3".split(""))}
-                className="px-3.5 py-1 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-[#6366f1] hover:border-[#6366f1]/35 transition-all cursor-pointer font-bold shadow-sm"
-              >
-                A1B2C3
-              </button>
-              <button
-                type="button"
-                onClick={() => setCode("X9Y8Z7".split(""))}
-                className="px-3.5 py-1 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-[#6366f1] hover:border-[#6366f1]/35 transition-all cursor-pointer font-bold shadow-sm"
-              >
-                X9Y8Z7
-              </button>
-            </div>
-          </div>
-
           {error && (
-            <div className="flex items-center gap-2 text-[11px] font-bold text-rose-400 bg-rose-950/20 border border-rose-900/40 p-3.5 rounded-2xl w-full max-w-xs mb-4 text-center justify-center animate-shake">
-              <ErrorOutlineIcon className="text-sm text-rose-400" />
+            <div className="flex items-center gap-2 text-[10px] sm:text-[11px] font-bold text-rose-400 bg-rose-950/20 border border-rose-900/40 p-3 sm:p-3.5 rounded-2xl w-full max-w-xs mb-4 text-center justify-center animate-shake">
+              <ErrorOutlineIcon className="text-sm text-rose-400 flex-shrink-0" />
               <span>{error}</span>
             </div>
           )}
@@ -330,7 +307,7 @@ export default function ReceiveCard() {
           <button
             type="submit"
             disabled={isLoading || code.some((val) => val === "")}
-            className="w-full max-w-xs h-13.5 btn-premium rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 disabled:opacity-40 disabled:pointer-events-none"
+            className="w-full max-w-xs h-12 sm:h-13.5 btn-premium rounded-2xl font-black uppercase tracking-widest text-[11px] sm:text-xs flex items-center justify-center gap-2 disabled:opacity-40 disabled:pointer-events-none"
           >
             {isLoading ? (
               <div className="flex items-center gap-2">
@@ -350,49 +327,49 @@ export default function ReceiveCard() {
           {/* Back Button */}
           <button
             onClick={resetReceive}
-            className="self-start text-[10px] text-slate-400 hover:text-[#6366f1] font-bold uppercase tracking-wider transition-colors flex items-center gap-1 mb-4"
+            className="self-start text-[9px] sm:text-[10px] text-slate-400 hover:text-[#6366f1] font-bold uppercase tracking-wider transition-colors flex items-center gap-1 mb-3 sm:mb-4"
           >
-            <ArrowBackIcon className="text-sm" />
+            <ArrowBackIcon className="text-xs sm:text-sm" />
             <span>Enter another code</span>
           </button>
 
           {/* Details header */}
-          <div className="flex justify-between items-end mb-4 border-b border-slate-800/80 pb-3">
+          <div className="flex justify-between items-end mb-3 sm:mb-4 border-b border-slate-800/80 pb-2.5 sm:pb-3">
             <div>
-              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+              <span className="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase tracking-wider">
                 Code: {activeCode.slice(0, 3)} {activeCode.slice(3)}
               </span>
-              <h4 className="text-base font-black text-slate-100 mt-0.5">
+              <h4 className="text-sm sm:text-base font-black text-slate-100 mt-0.5">
                 Ready to download
               </h4>
             </div>
-            <span className="text-[10px] font-bold text-indigo-400 bg-indigo-950/40 border border-indigo-900/40 px-2.5 py-1 rounded-full uppercase tracking-wider">
+            <span className="text-[9px] sm:text-[10px] font-bold text-indigo-400 bg-indigo-950/40 border border-indigo-900/40 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full uppercase tracking-wider">
               Expires in {transfer.expiresInMinutes}m
             </span>
           </div>
 
           {/* Self-Destruct Banner */}
-          <div className="flex items-center gap-2 text-[10px] font-bold text-indigo-300 bg-indigo-950/20 border border-indigo-900/30 p-3 rounded-2xl w-full mb-4 justify-center">
-            <ShieldIcon className="text-sm text-indigo-400" />
+          <div className="flex items-center gap-2 text-[9px] sm:text-[10px] font-bold text-indigo-300 bg-indigo-950/20 border border-indigo-900/30 p-2.5 sm:p-3 rounded-2xl w-full mb-3 sm:mb-4 justify-center">
+            <ShieldIcon className="text-xs sm:text-sm text-indigo-400 flex-shrink-0" />
             <span>Files will delete from the server immediately after download.</span>
           </div>
 
           {/* List of files */}
-          <div className="max-h-60 overflow-y-auto pr-1 mb-6 custom-scrollbar space-y-2">
+          <div className="max-h-48 sm:max-h-60 overflow-y-auto pr-1 mb-4 sm:mb-6 custom-scrollbar space-y-2">
             {transfer.files.map((file, idx) => {
               const fileClass = getFileClass(file.name);
               return (
                 <div
                   key={idx}
-                  className={`flex items-center justify-between p-3 rounded-2xl glass-card text-sm border-l-3 ${getBorderClass(fileClass)}`}
+                  className={`flex items-center justify-between p-2.5 sm:p-3 rounded-2xl glass-card text-sm border-l-3 ${getBorderClass(fileClass)}`}
                 >
-                  <div className="flex items-center gap-3 overflow-hidden mr-2">
-                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${fileClass}`}>
-                      <InsertDriveFileIcon className="text-sm" />
+                  <div className="flex items-center gap-2.5 sm:gap-3 overflow-hidden mr-2">
+                    <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${fileClass}`}>
+                      <InsertDriveFileIcon className="text-xs sm:text-sm" />
                     </div>
                     <div className="overflow-hidden">
-                      <p className="text-slate-200 font-bold truncate text-xs">{file.name}</p>
-                      <p className="text-[10px] text-slate-400 font-bold">{formatBytes(file.size)}</p>
+                      <p className="text-slate-200 font-bold truncate text-[11px] sm:text-xs">{file.name}</p>
+                      <p className="text-[9px] sm:text-[10px] text-slate-400 font-bold">{formatBytes(file.size)}</p>
                     </div>
                   </div>
                 </div>
@@ -400,7 +377,7 @@ export default function ReceiveCard() {
             })}
           </div>
 
-          <div className="flex justify-between items-center text-xs text-slate-400 px-1 mb-6 font-bold">
+          <div className="flex justify-between items-center text-[11px] sm:text-xs text-slate-400 px-1 mb-4 sm:mb-6 font-bold">
             <span>{transfer.files.length} files</span>
             <span className="text-slate-200 font-mono font-bold">{formatBytes(totalFilesSize)}</span>
           </div>
@@ -413,7 +390,7 @@ export default function ReceiveCard() {
                   className="h-full bg-gradient-to-r from-[#6366f1] via-[#8b5cf6] to-[#a855f7] rounded-full transition-all duration-150"
                 />
               </div>
-              <div className="flex justify-between w-full text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+              <div className="flex justify-between w-full text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-wider">
                 <span>Downloading bundle...</span>
                 <span className="font-mono">{downloadProgress}%</span>
               </div>
@@ -421,7 +398,7 @@ export default function ReceiveCard() {
           ) : (
             <button
               onClick={handleDownload}
-              className="w-full h-13.5 btn-premium rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 animate-fade-in"
+              className="w-full h-12 sm:h-13.5 btn-premium rounded-2xl font-black uppercase tracking-widest text-[11px] sm:text-xs flex items-center justify-center gap-2 animate-fade-in"
             >
               <DownloadIcon className="text-sm animate-pulse" />
               <span>Download All Files</span>

@@ -23,8 +23,8 @@ export default function Header() {
               </svg>
             </div>
             <div>
-              <h1 className="text-base font-black tracking-tight text-slate-100 leading-none">
-                QuickSend
+              <h1 className="text-xl font-black tracking-tight text-slate-100 leading-none">
+                QuiickSend
               </h1>
               <p className="text-[9px] text-indigo-400 font-bold tracking-widest uppercase leading-none mt-1">
                 P2P Web File Transfer

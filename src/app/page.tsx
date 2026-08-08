@@ -37,11 +37,11 @@ function QuickSendApp() {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(99,102,241,0.03),rgba(0,0,0,0))] pointer-events-none z-0" />
 
       {/* Main Content Layout */}
-      <div className="flex-1 w-full mx-auto px-10 flex items-center justify-center relative z-10 overflow-hidden">
+      <div className="flex-1 w-full mx-auto px-4 sm:px-6 md:px-10 flex items-center justify-center relative z-10 overflow-hidden">
         <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center max-h-full overflow-y-auto lg:overflow-visible custom-scrollbar py-4">
 
-          {/* LEFT COLUMN: Feature Presentation and Interactive Dashboard */}
-          <div className="lg:col-span-5 flex flex-col items-start space-y-6 md:space-y-8">
+          {/* LEFT COLUMN: Feature Presentation — hidden on mobile, visible on lg+ */}
+          <div className="hidden lg:flex lg:col-span-5 flex-col items-start space-y-6 md:space-y-8">
 
             <div className="space-y-3 md:space-y-4">
               <h2 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight leading-none text-slate-100">
@@ -139,18 +139,18 @@ function QuickSendApp() {
           <div className="lg:col-span-7 w-full flex justify-center">
             {/* Main Interactive Glass Card with dynamic glows based on tab selection */}
             <div
-              className={`w-full max-w-lg glass-panel rounded-3xl p-5 md:p-8 border transition-all duration-500 ${activeTab === "send"
-                ? "border-indigo-900/40 shadow-[0_15px_40px_-5px_rgba(99,102,241,0.02)] animate-glow-pulse"
-                : "border-purple-900/40 shadow-[0_15px_40px_-5px_rgba(168,85,247,0.02)] animate-glow-pulse"
+              className={`w-full max-w-lg glass-panel rounded-3xl p-4 sm:p-5 md:p-8 border transition-all duration-500 ${activeTab === "send"
+                ? "border-indigo-900/40 shadow-[0_15px_40px_-5px_rgba(99,102,241,0.02)]"
+                : "border-purple-900/40 shadow-[0_15px_40px_-5px_rgba(168,85,247,0.02)]"
                 }`}
             >
               {/* Tab Switcher */}
-              <div className="grid grid-cols-2 p-1.5 bg-slate-950 border border-slate-800/50 rounded-2xl mb-6 md:mb-8 relative z-10">
+              <div className="grid grid-cols-2 p-1.5 bg-slate-950 border border-slate-800/50 rounded-2xl mb-5 md:mb-8 relative z-10">
                 <button
                   onClick={() => setActiveTab("send")}
-                  className={`py-3 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer ${activeTab === "send"
+                  className={`py-2.5 md:py-3 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer ${activeTab === "send"
                     ? "bg-slate-900 text-indigo-400 border border-slate-800 shadow-sm"
-                    : "text-slate-400 hover:text-slate-205 hover:text-slate-200"
+                    : "text-slate-400 hover:text-slate-200"
                     }`}
                 >
                   <SendIcon className={`text-xs ${activeTab === "send" ? "text-indigo-400" : ""}`} />
@@ -158,9 +158,9 @@ function QuickSendApp() {
                 </button>
                 <button
                   onClick={() => setActiveTab("receive")}
-                  className={`py-3 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer ${activeTab === "receive"
+                  className={`py-2.5 md:py-3 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer ${activeTab === "receive"
                     ? "bg-slate-900 text-purple-400 border border-slate-800 shadow-sm"
-                    : "text-slate-400 hover:text-slate-205 hover:text-slate-200"
+                    : "text-slate-400 hover:text-slate-200"
                     }`}
                 >
                   <GetAppIcon className={`text-xs ${activeTab === "receive" ? "text-purple-400" : ""}`} />
@@ -169,7 +169,7 @@ function QuickSendApp() {
               </div>
 
               {/* Active Tab Component */}
-              <div className="min-h-[295px] flex items-center justify-center relative z-10">
+              <div className="min-h-[280px] sm:min-h-[295px] flex items-center justify-center relative z-10">
                 {activeTab === "send" ? <SendCard /> : <ReceiveCard />}
               </div>
             </div>

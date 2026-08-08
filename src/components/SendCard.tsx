@@ -301,8 +301,8 @@ export default function SendCard() {
   return (
     <div className="w-full flex flex-col items-center">
       {error && (
-        <div className="flex items-center gap-2 text-[11px] font-bold text-rose-400 bg-rose-955 bg-rose-955 bg-rose-950/20 border border-rose-900/40 p-3.5 rounded-2xl w-full max-w-xs mb-4 text-center justify-center animate-shake">
-          <ErrorOutlineIcon className="text-sm text-rose-400" />
+        <div className="flex items-center gap-2 text-[11px] font-bold text-rose-400 bg-rose-950/20 border border-rose-900/40 p-3 sm:p-3.5 rounded-2xl w-full mb-4 text-center justify-center animate-shake">
+          <ErrorOutlineIcon className="text-sm text-rose-400 flex-shrink-0" />
           <span>{error}</span>
         </div>
       )}
@@ -314,7 +314,7 @@ export default function SendCard() {
           onDragLeave={handleDrag}
           onDrop={handleDrop}
           onClick={triggerFileInput}
-          className={`w-full border-2 border-dashed rounded-3xl p-10 flex flex-col items-center justify-center cursor-pointer transition-all duration-500 group relative overflow-hidden ${
+          className={`w-full border-2 border-dashed rounded-3xl p-8 sm:p-10 flex flex-col items-center justify-center cursor-pointer transition-all duration-500 group relative overflow-hidden ${
             dragActive
               ? "border-[#6366f1] bg-[#6366f1]/5 shadow-[0_0_40px_rgba(99,102,241,0.06)] scale-[0.99]"
               : "border-slate-800 hover:border-[#6366f1] hover:bg-slate-800/10 shadow-sm"
@@ -327,28 +327,28 @@ export default function SendCard() {
             multiple
             className="hidden"
           />
-          <div className="w-18 h-18 rounded-2xl bg-slate-900 flex items-center justify-center mb-6 border border-slate-800 shadow-sm group-hover:scale-105 transition-all duration-300">
+          <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-slate-900 flex items-center justify-center mb-5 sm:mb-6 border border-slate-800 shadow-sm group-hover:scale-105 transition-all duration-300">
             <CloudUploadIcon 
-              className={`text-3xl transition-all duration-300 ${
+              className={`text-2xl sm:text-3xl transition-all duration-300 ${
                 dragActive 
                   ? "text-[#6366f1] scale-110 animate-bounce" 
-                  : "text-slate-550 text-slate-500 group-hover:text-[#6366f1]"
+                  : "text-slate-500 group-hover:text-[#6366f1]"
               }`} 
             />
           </div>
-          <h3 className="text-base font-bold mb-1.5 text-slate-100">
+          <h3 className="text-sm sm:text-base font-bold mb-1.5 text-slate-100">
             Drag & drop files here
           </h3>
-          <p className="text-xs text-slate-400 text-center max-w-[260px] font-semibold leading-relaxed">
-            or click to browse your files. Packages up to 10MB are supported.
+          <p className="text-[11px] sm:text-xs text-slate-400 text-center max-w-[260px] font-semibold leading-relaxed">
+            or click to browse your files. Max <span className="text-indigo-400 font-bold">10MB</span> per file.
           </p>
         </div>
       )}
 
       {status === "listing" && (
         <div className="w-full flex flex-col animate-fade-in">
-          <div className="flex justify-between items-center mb-4 px-1">
-            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+          <div className="flex justify-between items-center mb-3 sm:mb-4 px-1">
+            <h4 className="text-[11px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest">
               Selected files ({files.length})
             </h4>
             <button
@@ -357,28 +357,28 @@ export default function SendCard() {
                 setStatus("idle");
                 setError(null);
               }}
-              className="text-xs font-bold text-slate-400 hover:text-[#6366f1] transition-colors cursor-pointer"
+              className="text-[11px] sm:text-xs font-bold text-slate-400 hover:text-[#6366f1] transition-colors cursor-pointer"
             >
               Clear all
             </button>
           </div>
 
           {/* Files container */}
-          <div className="max-h-60 overflow-y-auto pr-1 mb-6 custom-scrollbar space-y-2">
+          <div className="max-h-48 sm:max-h-60 overflow-y-auto pr-1 mb-4 sm:mb-6 custom-scrollbar space-y-2">
             {files.map((file, idx) => {
               const fileClass = getFileClass(file.name);
               return (
                 <div
                   key={idx}
-                  className={`flex items-center justify-between p-3 rounded-2xl glass-card text-sm border-l-3 ${getBorderClass(fileClass)}`}
+                  className={`flex items-center justify-between p-2.5 sm:p-3 rounded-2xl glass-card text-sm border-l-3 ${getBorderClass(fileClass)}`}
                 >
-                  <div className="flex items-center gap-3 overflow-hidden mr-2">
-                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${fileClass}`}>
-                      <InsertDriveFileIcon className="text-sm" />
+                  <div className="flex items-center gap-2.5 sm:gap-3 overflow-hidden mr-2">
+                    <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${fileClass}`}>
+                      <InsertDriveFileIcon className="text-xs sm:text-sm" />
                     </div>
                     <div className="overflow-hidden">
-                      <p className="text-slate-200 font-bold truncate text-xs">{file.name}</p>
-                      <p className="text-[10px] text-slate-400 font-bold">{formatBytes(file.size)}</p>
+                      <p className="text-slate-200 font-bold truncate text-[11px] sm:text-xs">{file.name}</p>
+                      <p className="text-[9px] sm:text-[10px] text-slate-400 font-bold">{formatBytes(file.size)}</p>
                     </div>
                   </div>
                   <button
@@ -393,34 +393,34 @@ export default function SendCard() {
           </div>
 
           {/* Expiry Selector and Submit */}
-          <div className="flex flex-col gap-4 border-t border-slate-800/60 pt-5">
-            <div className="flex justify-between items-center bg-slate-950 p-3 rounded-2xl border border-slate-800/80 shadow-inner">
-              <span className="text-xs text-slate-400 font-bold uppercase tracking-wider pl-1">Expiration</span>
+          <div className="flex flex-col gap-3 sm:gap-4 border-t border-slate-800/60 pt-4 sm:pt-5">
+            <div className="flex justify-between items-center bg-slate-950 p-2.5 sm:p-3 rounded-2xl border border-slate-800/80 shadow-inner">
+              <span className="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-wider pl-1">Expiry</span>
               <div className="flex gap-1">
                 {(["10m", "1h", "24h"] as ExpiryOption[]).map((opt) => (
                   <button
                     key={opt}
                     onClick={() => setExpiry(opt)}
-                    className={`px-3 py-1.5 text-[10px] font-bold rounded-xl transition-all cursor-pointer ${
+                    className={`px-2.5 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-[10px] font-bold rounded-xl transition-all cursor-pointer ${
                       expiry === opt
                         ? "bg-slate-900 text-[#6366f1] border border-slate-800 shadow-sm"
                         : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/50"
                     }`}
                   >
-                    {opt === "10m" ? "10 Mins" : opt === "1h" ? "1 Hour" : "24 Hours"}
+                    {opt === "10m" ? "10 Min" : opt === "1h" ? "1 Hour" : "24 Hr"}
                   </button>
                 ))}
               </div>
             </div>
 
-            <div className="flex justify-between items-center text-xs text-slate-400 px-1 font-bold">
+            <div className="flex justify-between items-center text-[11px] sm:text-xs text-slate-400 px-1 font-bold">
               <span>Total payload</span>
               <span className="text-slate-200 font-mono font-bold">{formatBytes(totalSize)}</span>
             </div>
 
             <button
               onClick={startUpload}
-              className="w-full h-13.5 btn-premium rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 group"
+              className="w-full h-12 sm:h-13.5 btn-premium rounded-2xl font-black uppercase tracking-widest text-[11px] sm:text-xs flex items-center justify-center gap-2 group"
             >
               <span>Send Securely</span>
               <ArrowForwardIcon className="text-sm group-hover:translate-x-0.5 transition-transform" />
@@ -430,8 +430,8 @@ export default function SendCard() {
       )}
 
       {status === "uploading" && (
-        <div className="w-full flex flex-col py-6 items-center text-center animate-fade-in">
-          <div className="relative w-28 h-28 flex items-center justify-center mb-6">
+        <div className="w-full flex flex-col py-4 sm:py-6 items-center text-center animate-fade-in">
+          <div className="relative w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center mb-5 sm:mb-6">
             {/* Progress Circular visual */}
             <svg className="w-full h-full transform -rotate-90">
               <defs>
@@ -441,16 +441,16 @@ export default function SendCard() {
                 </linearGradient>
               </defs>
               <circle
-                cx="56"
-                cy="56"
-                r="48"
+                cx="50%"
+                cy="50%"
+                r="45%"
                 className="stroke-slate-800 fill-none"
                 strokeWidth="5"
               />
               <circle
-                cx="56"
-                cy="56"
-                r="48"
+                cx="50%"
+                cy="50%"
+                r="45%"
                 stroke="url(#uploadGrad)"
                 className="fill-none transition-all duration-300 drop-shadow-[0_2px_4px_rgba(99,102,241,0.15)]"
                 strokeWidth="5"
@@ -459,19 +459,19 @@ export default function SendCard() {
                 strokeLinecap="round"
               />
             </svg>
-            <span className="absolute text-2xl font-black text-slate-100 font-mono">
+            <span className="absolute text-xl sm:text-2xl font-black text-slate-100 font-mono">
               {uploadProgress}%
             </span>
           </div>
 
-          <h3 className="text-base font-bold text-slate-200 mb-1.5">
+          <h3 className="text-sm sm:text-base font-bold text-slate-200 mb-1.5">
             Uploading Transfer Package
           </h3>
-          <p className="text-[10px] text-slate-400 font-mono tracking-widest uppercase animate-pulse">
+          <p className="text-[9px] sm:text-[10px] text-slate-400 font-mono tracking-widest uppercase animate-pulse">
             {statusMessage}
           </p>
 
-          <div className="w-full bg-slate-800 h-1.5 rounded-full mt-8 border border-slate-800/50 overflow-hidden shadow-inner">
+          <div className="w-full bg-slate-800 h-1.5 rounded-full mt-6 sm:mt-8 border border-slate-800/50 overflow-hidden shadow-inner">
             <div
               style={{ width: `${uploadProgress}%` }}
               className="h-full bg-gradient-to-r from-[#6366f1] via-[#8b5cf6] to-[#a855f7] rounded-full transition-all duration-300"
@@ -483,51 +483,50 @@ export default function SendCard() {
       {status === "success" && (
         <div className="w-full flex flex-col items-center py-2 animate-fade-in">
           {/* Main Key Display inside a glowing glass bubble */}
-          <div className="bg-slate-950 w-full rounded-3xl p-6 border border-slate-800/80 shadow-inner flex flex-col items-center justify-center relative overflow-hidden mb-5">
+          <div className="bg-slate-950 w-full rounded-3xl p-5 sm:p-6 border border-slate-800/80 shadow-inner flex flex-col items-center justify-center relative overflow-hidden mb-4 sm:mb-5">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(99,102,241,0.06),transparent_70%)] pointer-events-none" />
             
-            <span className="text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-2">
+            <span className="text-[9px] sm:text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-2">
               Share 6-Digit Code
             </span>
             
-            <div className="flex items-center gap-3 relative z-10">
-              <span className="text-4xl md:text-5xl font-black font-mono tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] via-[#8b5cf6] to-[#a855f7] drop-shadow-[0_2px_4px_rgba(99,102,241,0.1)]">
+            <div className="flex items-center gap-2.5 sm:gap-3 relative z-10">
+              <span className="text-3xl sm:text-4xl md:text-5xl font-black font-mono tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] via-[#8b5cf6] to-[#a855f7] drop-shadow-[0_2px_4px_rgba(99,102,241,0.1)]">
                 {generatedCode.slice(0, 3)} {generatedCode.slice(3)}
               </span>
               <button
                 onClick={copyCodeToClipboard}
-                className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 hover:text-[#6366f1] active:scale-95 transition-all text-slate-400 cursor-pointer shadow-sm"
+                className="p-2 sm:p-2.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 hover:text-[#6366f1] active:scale-95 transition-all text-slate-400 cursor-pointer shadow-sm"
               >
                 {copiedCode ? <CheckIcon className="text-emerald-500 text-sm" /> : <ContentCopyIcon className="text-sm" />}
               </button>
             </div>
             
-            <p className="text-[10px] text-slate-400 mt-4 flex items-center gap-1.5 font-bold uppercase tracking-wider">
+            <p className="text-[9px] sm:text-[10px] text-slate-400 mt-3 sm:mt-4 flex items-center gap-1.5 font-bold uppercase tracking-wider">
               <AccessTimeIcon className="text-xs text-[#6366f1]" />
               Expires in <span className="font-mono text-slate-200 font-black">{formatTimeLeft(timeLeft)}</span>
             </p>
           </div>
 
           {/* Sharing Tools */}
-          <div className="w-full flex flex-col gap-3">
-
+          <div className="w-full flex flex-col gap-2.5 sm:gap-3">
 
             {/* QR Toggle Button */}
             <div className="w-full flex flex-col items-center">
               <button
                 onClick={() => setShowQr(!showQr)}
-                className="text-[11px] text-slate-400 hover:text-slate-250 hover:text-slate-200 font-bold uppercase tracking-wider transition-colors flex items-center gap-1.5 py-2 cursor-pointer"
+                className="text-[10px] sm:text-[11px] text-slate-400 hover:text-slate-200 font-bold uppercase tracking-wider transition-colors flex items-center gap-1.5 py-2 cursor-pointer"
               >
                 <QrCodeIcon className="text-sm text-[#6366f1]" />
                 <span>{showQr ? "Hide QR Code" : "Show QR Code"}</span>
               </button>
 
               {showQr && (
-                <div className="mt-2.5 p-3 rounded-3xl bg-slate-950 border border-slate-800 flex flex-col items-center shadow-md animate-scale-up">
-                  <div className="p-2.5 bg-white rounded-2xl border border-slate-900/85 shadow-sm">
-                    <canvas ref={qrCanvasRef} className="w-[130px] h-[130px] block" />
+                <div className="mt-2 sm:mt-2.5 p-3 rounded-3xl bg-slate-950 border border-slate-800 flex flex-col items-center shadow-md animate-scale-up">
+                  <div className="p-2 sm:p-2.5 bg-white rounded-2xl border border-slate-900/85 shadow-sm">
+                    <canvas ref={qrCanvasRef} className="w-[110px] h-[110px] sm:w-[130px] sm:h-[130px] block" />
                   </div>
-                  <p className="text-[9px] text-slate-400 mt-2.5 font-bold uppercase tracking-wider">
+                  <p className="text-[8px] sm:text-[9px] text-slate-400 mt-2 sm:mt-2.5 font-bold uppercase tracking-wider">
                     Scan on mobile to download
                   </p>
                 </div>
@@ -540,7 +539,7 @@ export default function SendCard() {
                 setStatus("idle");
                 setError(null);
               }}
-              className="mt-3 w-full h-12 rounded-2xl border border-slate-800 hover:border-slate-700 bg-slate-900/50 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white transition-all cursor-pointer"
+              className="mt-2 sm:mt-3 w-full h-11 sm:h-12 rounded-2xl border border-slate-800 hover:border-slate-700 bg-slate-900/50 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white transition-all cursor-pointer"
             >
               Send Another File
             </button>
