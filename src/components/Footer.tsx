@@ -10,8 +10,6 @@ export default function Footer() {
       <span className="text-slate-500">QuickSend © {currentYear}</span>
       <span className="mx-1.5 text-slate-700">·</span>
       <span>Open Source</span>
-      <span className="mx-1.5 text-slate-700">·</span>
-      <span>Developed by Bibekananda Mahata</span>
     </footer>
   );
 }
