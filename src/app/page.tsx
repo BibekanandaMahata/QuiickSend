@@ -26,6 +26,18 @@ function QuickSendApp() {
     }
   }, [searchParams]);
 
+  // Background cleanup trigger for expired files
+  useEffect(() => {
+    fetch("/api/cleanup")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.deletedTransfersCount > 0) {
+          console.log(`Auto-cleaned ${data.deletedTransfersCount} expired transfers.`);
+        }
+      })
+      .catch((err) => console.error("Auto-cleanup failed:", err));
+  }, []);
+
   return (
     <div className="w-full h-full flex flex-col justify-center items-center relative select-none overflow-hidden py-4 md:py-8">
       {/* Soft Glowing Space Aurora Orbs (Static, Softer Dark Mode Optimized) */}

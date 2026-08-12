@@ -17,7 +17,7 @@ import { supabase } from "@/utils/supabase";
 
 type ExpiryOption = "10m" | "1h" | "24h";
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB limit
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB limit
 
 const getFileClass = (fileName: string) => {
   const ext = fileName.split(".").pop()?.toLowerCase();
@@ -160,10 +160,10 @@ export default function SendCard() {
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const newFiles = Array.from(e.dataTransfer.files);
 
-      // Enforce 10MB limit per file
+      // Enforce 50MB limit per file
       const largeFile = newFiles.find((f) => f.size > MAX_FILE_SIZE);
       if (largeFile) {
-        setError(`File "${largeFile.name}" exceeds the 10MB size limit.`);
+        setError(`File "${largeFile.name}" exceeds the 50MB size limit.`);
         return;
       }
 
@@ -177,10 +177,10 @@ export default function SendCard() {
     if (e.target.files && e.target.files.length > 0) {
       const newFiles = Array.from(e.target.files);
 
-      // Enforce 10MB limit per file
+      // Enforce 50MB limit per file
       const largeFile = newFiles.find((f) => f.size > MAX_FILE_SIZE);
       if (largeFile) {
-        setError(`File "${largeFile.name}" exceeds the 10MB size limit.`);
+        setError(`File "${largeFile.name}" exceeds the 50MB size limit.`);
         return;
       }
 
@@ -297,7 +297,7 @@ export default function SendCard() {
       } else {
         setError(
           err.message ||
-            "Failed to upload files. Check your bucket RLS settings and try again.",
+          "Failed to upload files. Check your bucket RLS settings and try again.",
         );
       }
       setStatus("idle");
@@ -352,11 +352,10 @@ export default function SendCard() {
           onDragLeave={handleDrag}
           onDrop={handleDrop}
           onClick={triggerFileInput}
-          className={`w-full border-2 border-dashed rounded-3xl p-8 sm:p-10 flex flex-col items-center justify-center cursor-pointer transition-all duration-500 group relative overflow-hidden ${
-            dragActive
+          className={`w-full border-2 border-dashed rounded-3xl p-8 sm:p-10 flex flex-col items-center justify-center cursor-pointer transition-all duration-500 group relative overflow-hidden ${dragActive
               ? "border-amber-700 bg-amber-700/5 shadow-[0_0_40px_rgba(180,83,9,0.02)] scale-[0.99]"
               : "border-stone-800 hover:border-amber-700 hover:bg-stone-800/10 shadow-sm"
-          }`}
+            }`}
         >
           <input
             type="file"
@@ -367,11 +366,10 @@ export default function SendCard() {
           />
           <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-stone-900/60 flex items-center justify-center mb-5 sm:mb-6 border border-stone-800 shadow-sm group-hover:scale-105 transition-all duration-300">
             <CloudUploadIcon
-              className={`text-2xl sm:text-3xl transition-all duration-300 ${
-                dragActive
+              className={`text-2xl sm:text-3xl transition-all duration-300 ${dragActive
                   ? "text-amber-600 scale-110 animate-bounce"
                   : "text-slate-500 group-hover:text-amber-600"
-              }`}
+                }`}
             />
           </div>
           <h3 className="text-sm sm:text-base font-bold mb-1.5 text-slate-100">
@@ -448,11 +446,10 @@ export default function SendCard() {
                   <button
                     key={opt}
                     onClick={() => setExpiry(opt)}
-                    className={`px-2.5 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-[10px] font-bold rounded-xl transition-all cursor-pointer ${
-                      expiry === opt
+                    className={`px-2.5 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-[10px] font-bold rounded-xl transition-all cursor-pointer ${expiry === opt
                         ? "bg-stone-800 text-amber-600 border border-stone-700/80 shadow-sm"
                         : "text-slate-400 hover:text-slate-200 hover:bg-stone-800/50"
-                    }`}
+                      }`}
                   >
                     {opt === "10m"
                       ? "10 Min"
