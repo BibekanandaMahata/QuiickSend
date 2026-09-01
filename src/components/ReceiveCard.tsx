@@ -8,6 +8,11 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutlined";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ShieldIcon from "@mui/icons-material/Shield";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import CheckIcon from "@mui/icons-material/Check";
+import CodeIcon from "@mui/icons-material/Code";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import CloseIcon from "@mui/icons-material/Close";
 import confetti from "canvas-confetti";
 import { formatBytes } from "@/utils/format";
 import { supabase } from "@/utils/supabase";
@@ -50,28 +55,65 @@ const getFileClass = (fileName: string) => {
       "c",
       "cs",
       "java",
+      "txt",
+      "md",
+      "env",
+      "yaml",
+      "yml",
+      "xml",
+      "sql",
     ].includes(ext)
   )
     return "file-code";
   return "file-default";
 };
 
+const isCodeOrTextFile = (fileName: string) => {
+  const ext = fileName.split(".").pop()?.toLowerCase();
+  if (!ext) return false;
+  return (
+    [
+      "js",
+      "jsx",
+      "ts",
+      "tsx",
+      "html",
+      "css",
+      "json",
+      "py",
+      "sh",
+      "go",
+      "cpp",
+      "c",
+      "cs",
+      "java",
+      "txt",
+      "md",
+      "env",
+      "yaml",
+      "yml",
+      "xml",
+      "sql",
+    ].includes(ext) || getFileClass(fileName) === "file-code"
+  );
+};
+
 const getBorderClass = (fileClass: string) => {
   switch (fileClass) {
     case "file-pdf":
-      return "border-l-yellow-600/40 hover:border-l-yellow-600";
+      return "border-l-rose-500/60 hover:border-l-rose-500";
     case "file-zip":
-      return "border-l-amber-600/40 hover:border-l-amber-600";
+      return "border-l-purple-500/60 hover:border-l-purple-500";
     case "file-image":
-      return "border-l-amber-700/40 hover:border-l-amber-700";
+      return "border-l-cyan-500/60 hover:border-l-cyan-500";
     case "file-audio":
-      return "border-l-yellow-600/40 hover:border-l-yellow-600";
+      return "border-l-emerald-500/60 hover:border-l-emerald-500";
     case "file-video":
-      return "border-l-yellow-700/40 hover:border-l-yellow-700";
+      return "border-l-orange-500/60 hover:border-l-orange-500";
     case "file-code":
-      return "border-l-amber-800/40 hover:border-l-amber-800";
+      return "border-l-amber-500/60 hover:border-l-amber-500";
     default:
-      return "border-l-amber-700/40 hover:border-l-amber-700";
+      return "border-l-amber-500/40 hover:border-l-amber-500";
   }
 };
 
@@ -86,7 +128,80 @@ export default function ReceiveCard() {
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [isDeleted, setIsDeleted] = useState(false);
 
+  const [copyingFileIdx, setCopyingFileIdx] = useState<number | null>(null);
+  const [copiedFileIdx, setCopiedFileIdx] = useState<number | null>(null);
+  const [previewModal, setPreviewModal] = useState<{
+    name: string;
+    content: string;
+  } | null>(null);
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  const handleCopyCode = async (file: MockFile, index: number) => {
+    setCopyingFileIdx(index);
+    setError(null);
+    try {
+      const { data, error: storageError } = await supabase.storage
+        .from("quicksend-files")
+        .download(file.storage_path);
+
+      if (storageError) throw storageError;
+
+      const text = await data.text();
+      await navigator.clipboard.writeText(text);
+
+      setCopiedFileIdx(index);
+      setTimeout(() => setCopiedFileIdx(null), 2500);
+    } catch (err: any) {
+      console.error("Failed to copy file code:", err);
+      setError("Failed to copy code from file.");
+    } finally {
+      setCopyingFileIdx(null);
+    }
+  };
+
+  const handlePreviewCode = async (file: MockFile) => {
+    setIsPreviewLoading(true);
+    setError(null);
+    try {
+      const { data, error: storageError } = await supabase.storage
+        .from("quicksend-files")
+        .download(file.storage_path);
+
+      if (storageError) throw storageError;
+
+      const text = await data.text();
+      setPreviewModal({ name: file.name, content: text });
+    } catch (err: any) {
+      console.error("Failed to load file preview:", err);
+      setError("Failed to load code preview.");
+    } finally {
+      setIsPreviewLoading(false);
+    }
+  };
+
+  const handleSingleDownload = async (file: MockFile) => {
+    try {
+      const { data, error: storageError } = await supabase.storage
+        .from("quicksend-files")
+        .download(file.storage_path);
+
+      if (storageError) throw storageError;
+
+      const url = URL.createObjectURL(data);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = file.name;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err: any) {
+      console.error("Single file download error:", err);
+      setError("Failed to download file.");
+    }
+  };
 
   // Focus the first input box on load
   useEffect(() => {
@@ -96,7 +211,7 @@ export default function ReceiveCard() {
   }, []);
 
   const handleChange = (element: HTMLInputElement, index: number) => {
-    const value = element.value.replace(/[^0-9a-zA-Z]/g, "").toUpperCase(); // Allow alphanumeric only
+    const value = element.value.replace(/[^0-9]/g, ""); // Allow digits only
     if (!value) return;
 
     const newCode = [...code];
@@ -138,8 +253,7 @@ export default function ReceiveCard() {
     e.preventDefault();
     const pasteData = e.clipboardData
       .getData("text")
-      .replace(/[^0-9a-zA-Z]/g, "")
-      .toUpperCase()
+      .replace(/[^0-9]/g, "")
       .substring(0, 6);
     if (pasteData.length === 6) {
       const newCode = pasteData.split("");
@@ -153,7 +267,7 @@ export default function ReceiveCard() {
     e?.preventDefault();
     const enteredCode = code.join("");
     if (enteredCode.length < 6) {
-      setError("Please enter the complete 6-character code.");
+      setError("Please enter the complete 6-digit numeric code.");
       return;
     }
 
@@ -245,7 +359,6 @@ export default function ReceiveCard() {
       }
 
       // --- IMMEDIATE SELF DESTRUCT TRIGGER ---
-      // 1. Delete database rows (Cascades and deletes child file records automatically)
       const { error: dbDeleteError } = await supabase
         .from("transfers")
         .delete()
@@ -257,7 +370,6 @@ export default function ReceiveCard() {
           dbDeleteError,
         );
 
-      // 2. Remove files from storage bucket
       const paths = transfer.files.map((f) => f.storage_path);
       const { error: storageDeleteError } = await supabase.storage
         .from("quicksend-files")
@@ -273,7 +385,6 @@ export default function ReceiveCard() {
         setIsDownloading(false);
         setIsDeleted(true);
 
-        // Celebrate with confetti
         confetti({
           particleCount: 120,
           spread: 80,
@@ -311,8 +422,8 @@ export default function ReceiveCard() {
     <div className="w-full flex flex-col items-center">
       {isDeleted ? (
         <div className="w-full flex flex-col items-center py-4 sm:py-6 text-center animate-fade-in">
-          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-amber-950/40 border border-amber-900/40 flex items-center justify-center mb-5 sm:mb-6 shadow-inner animate-pulse">
-            <ShieldIcon className="text-2xl sm:text-3xl text-amber-600" />
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-amber-950/40 border border-amber-900/50 flex items-center justify-center mb-5 sm:mb-6 shadow-inner animate-pulse">
+            <ShieldIcon className="text-2xl sm:text-3xl text-amber-500" />
           </div>
           <h3 className="text-sm sm:text-base font-bold text-slate-100 mb-1.5">
             Self-Destruct Triggered
@@ -323,7 +434,7 @@ export default function ReceiveCard() {
           </p>
           <button
             onClick={resetReceive}
-            className="w-full max-w-xs h-11 sm:h-12 rounded-2xl border border-stone-800 hover:border-stone-700 bg-stone-900/30 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white transition-all cursor-pointer"
+            className="w-full max-w-xs h-11 sm:h-12 rounded-2xl border border-slate-800 hover:border-slate-700 bg-slate-900/50 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white transition-all cursor-pointer"
           >
             Enter Another Code
           </button>
@@ -334,7 +445,7 @@ export default function ReceiveCard() {
           className="w-full flex flex-col items-center animate-fade-in"
         >
           <p className="text-[11px] sm:text-xs text-slate-400 text-center mb-5 sm:mb-6 max-w-xs font-semibold leading-relaxed">
-            Enter the 6-digit key to retrieve the shared files.
+            Enter the 6-digit numeric key to retrieve the shared files.
           </p>
 
           {/* 6 Digit Inputs */}
@@ -343,7 +454,8 @@ export default function ReceiveCard() {
               <input
                 key={index}
                 type="text"
-                inputMode="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 maxLength={1}
                 value={char}
                 ref={(el) => {
@@ -353,13 +465,13 @@ export default function ReceiveCard() {
                 onKeyDown={(e) => handleKeyDown(e, index)}
                 onPaste={index === 0 ? handlePaste : undefined}
                 disabled={isLoading}
-                className="w-10 h-12 sm:w-11 sm:h-13.5 md:w-13 md:h-15.5 text-center text-xl sm:text-2xl font-black font-mono bg-stone-900/40 rounded-xl sm:rounded-2xl border border-stone-800/80 focus:bg-stone-900/80 focus:border-amber-700 focus:ring-1 focus:ring-amber-700/50 focus:shadow-[0_0_15px_rgba(180,83,9,0.15)] outline-none text-white transition-all disabled:opacity-50 shadow-inner"
+                className="w-10 h-12 sm:w-11 sm:h-13.5 md:w-13 md:h-15.5 text-center text-xl sm:text-2xl font-black font-mono bg-slate-900/60 rounded-xl sm:rounded-2xl border border-slate-800 focus:bg-slate-900/90 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 focus:shadow-[0_0_20px_rgba(245,158,11,0.2)] outline-none text-white transition-all disabled:opacity-50 shadow-inner"
               />
             ))}
           </div>
 
           {error && (
-            <div className="flex items-center gap-2 text-[10px] sm:text-[11px] font-bold text-rose-400 bg-rose-950/20 border border-rose-900/40 p-3 sm:p-3.5 rounded-2xl w-full max-w-xs mb-4 text-center justify-center animate-shake">
+            <div className="flex items-center gap-2 text-[10px] sm:text-[11px] font-bold text-rose-400 bg-rose-950/30 border border-rose-900/50 p-3 sm:p-3.5 rounded-2xl w-full max-w-xs mb-4 text-center justify-center animate-shake">
               <ErrorOutlineIcon className="text-sm text-rose-400 flex-shrink-0" />
               <span>{error}</span>
             </div>
@@ -372,7 +484,7 @@ export default function ReceiveCard() {
           >
             {isLoading ? (
               <div className="flex items-center gap-2">
-                <RefreshIcon className="animate-spin text-sm text-amber-600" />
+                <RefreshIcon className="animate-spin text-sm text-amber-400" />
                 <span>Locating package...</span>
               </div>
             ) : (
@@ -388,51 +500,52 @@ export default function ReceiveCard() {
           {/* Back Button */}
           <button
             onClick={resetReceive}
-            className="self-start text-[9px] sm:text-[10px] text-slate-400 hover:text-amber-600 font-bold uppercase tracking-wider transition-colors flex items-center gap-1 mb-3 sm:mb-4"
+            className="self-start text-[9px] sm:text-[10px] text-slate-400 hover:text-amber-400 font-bold uppercase tracking-wider transition-colors flex items-center gap-1 mb-3 sm:mb-4"
           >
             <ArrowBackIcon className="text-xs sm:text-sm" />
             <span>Enter another code</span>
           </button>
 
           {/* Details header */}
-          <div className="flex justify-between items-end mb-3 sm:mb-4 border-b border-stone-800/80 pb-2.5 sm:pb-3">
+          <div className="flex justify-between items-end mb-3 sm:mb-4 border-b border-slate-800/80 pb-2.5 sm:pb-3">
             <div>
-              <span className="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+              <span className="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-wider">
                 Code: {activeCode.slice(0, 3)} {activeCode.slice(3)}
               </span>
               <h4 className="text-sm sm:text-base font-black text-slate-100 mt-0.5">
                 Ready to download
               </h4>
             </div>
-            <span className="text-[9px] sm:text-[10px] font-bold text-amber-600 bg-amber-950/40 border border-amber-900/40 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full uppercase tracking-wider">
+            <span className="text-[9px] sm:text-[10px] font-bold text-amber-400 bg-amber-950/40 border border-amber-900/50 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full uppercase tracking-wider">
               Expires in {transfer.expiresInMinutes}m
             </span>
           </div>
 
           {/* Self-Destruct Banner */}
-          <div className="flex items-center gap-2 text-[9px] sm:text-[10px] font-bold text-amber-600/90 bg-amber-950/20 border border-amber-900/20 p-2.5 sm:p-3 rounded-2xl w-full mb-3 sm:mb-4 justify-center">
-            <ShieldIcon className="text-xs sm:text-sm text-amber-600 flex-shrink-0" />
+          <div className="flex items-center gap-2 text-[9px] sm:text-[10px] font-bold text-amber-400 bg-amber-950/30 border border-amber-900/40 p-2.5 sm:p-3 rounded-2xl w-full mb-3 sm:mb-4 justify-center">
+            <ShieldIcon className="text-xs sm:text-sm text-amber-400 flex-shrink-0" />
             <span>
               Files will delete from the server immediately after download.
             </span>
           </div>
 
           {/* List of files */}
-          <div className="max-h-48 sm:max-h-60 overflow-y-auto pr-1 mb-4 sm:mb-6 custom-scrollbar space-y-2">
+          <div className="max-h-52 sm:max-h-64 overflow-y-auto pr-1 mb-4 sm:mb-6 custom-scrollbar space-y-2">
             {transfer.files.map((file, idx) => {
               const fileClass = getFileClass(file.name);
+              const isCode = isCodeOrTextFile(file.name);
               return (
                 <div
                   key={idx}
-                  className={`flex items-center justify-between p-2.5 sm:p-3 rounded-2xl glass-card text-sm border-l-3 ${getBorderClass(fileClass)}`}
+                  className={`flex items-center justify-between p-2.5 sm:p-3 rounded-2xl glass-card text-sm border-l-3 ${getBorderClass(fileClass)} transition-all`}
                 >
-                  <div className="flex items-center gap-2.5 sm:gap-3 overflow-hidden mr-2">
+                  <div className="flex items-center gap-2.5 sm:gap-3 overflow-hidden mr-2 min-w-0 flex-1">
                     <div
                       className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${fileClass}`}
                     >
                       <InsertDriveFileIcon className="text-xs sm:text-sm" />
                     </div>
-                    <div className="overflow-hidden">
+                    <div className="overflow-hidden min-w-0">
                       <p className="text-slate-200 font-bold truncate text-[11px] sm:text-xs">
                         {file.name}
                       </p>
@@ -440,6 +553,60 @@ export default function ReceiveCard() {
                         {formatBytes(file.size)}
                       </p>
                     </div>
+                  </div>
+
+                  {/* Actions for Code Copy / Insert and Download */}
+                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                    {isCode && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => handlePreviewCode(file)}
+                          disabled={isPreviewLoading}
+                          title="Preview Code"
+                          className="p-1.5 sm:p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-amber-500 hover:text-amber-400 text-slate-400 transition-all cursor-pointer flex items-center gap-1 text-[10px] sm:text-[11px] font-bold"
+                        >
+                          <VisibilityIcon className="text-xs sm:text-sm" />
+                          <span className="hidden sm:inline">Preview</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleCopyCode(file, idx)}
+                          disabled={copyingFileIdx === idx}
+                          title="Insert or Copy Code to Clipboard"
+                          className={`p-1.5 sm:p-2 rounded-xl border transition-all cursor-pointer flex items-center gap-1 text-[10px] sm:text-[11px] font-bold ${
+                            copiedFileIdx === idx
+                              ? "bg-emerald-950/50 border-emerald-800 text-emerald-400"
+                              : "bg-amber-950/40 border-amber-900/50 hover:border-amber-500 text-amber-400 hover:bg-amber-900/30 shadow-sm"
+                          }`}
+                        >
+                          {copyingFileIdx === idx ? (
+                            <RefreshIcon className="animate-spin text-xs sm:text-sm" />
+                          ) : copiedFileIdx === idx ? (
+                            <>
+                              <CheckIcon className="text-xs sm:text-sm" />
+                              <span>Copied!</span>
+                            </>
+                          ) : (
+                            <>
+                              <CodeIcon className="text-xs sm:text-sm" />
+                              <span>Insert Code</span>
+                            </>
+                          )}
+                        </button>
+                      </>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => handleSingleDownload(file)}
+                      title="Download File"
+                      className="p-1.5 sm:p-2 rounded-xl bg-amber-950/40 border border-amber-900/60 hover:border-amber-500 text-amber-400 hover:text-amber-300 transition-all cursor-pointer flex items-center gap-1 text-[10px] sm:text-[11px] font-bold shadow-sm"
+                    >
+                      <DownloadIcon className="text-xs sm:text-sm" />
+                      <span>Download</span>
+                    </button>
                   </div>
                 </div>
               );
@@ -455,10 +622,10 @@ export default function ReceiveCard() {
 
           {isDownloading ? (
             <div className="w-full flex flex-col items-center">
-              <div className="w-full bg-stone-800/60 h-1.5 rounded-full border border-stone-800/40 overflow-hidden mb-2">
+              <div className="w-full bg-slate-900/80 h-1.5 rounded-full border border-slate-800 overflow-hidden mb-2">
                 <div
                   style={{ width: `${downloadProgress}%` }}
-                  className="h-full bg-amber-700 rounded-full transition-all duration-150"
+                  className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-150"
                 />
               </div>
               <div className="flex justify-between w-full text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-wider">
@@ -475,6 +642,51 @@ export default function ReceiveCard() {
               <span>Download All Files</span>
             </button>
           )}
+        </div>
+      )}
+
+      {/* Code Preview Modal */}
+      {previewModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+          <div className="w-full max-w-2xl glass-panel rounded-3xl p-5 sm:p-6 border border-slate-800 shadow-2xl flex flex-col max-h-[85vh]">
+            <div className="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
+              <div className="flex items-center gap-2 overflow-hidden mr-2">
+                <CodeIcon className="text-amber-400 text-base flex-shrink-0" />
+                <h4 className="text-xs sm:text-sm font-bold text-slate-100 truncate">
+                  {previewModal.name}
+                </h4>
+              </div>
+              <button
+                onClick={() => setPreviewModal(null)}
+                className="p-1 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition-colors flex-shrink-0"
+              >
+                <CloseIcon className="text-sm" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto bg-slate-950/90 rounded-2xl p-4 border border-slate-900 font-mono text-[11px] sm:text-xs text-slate-300 leading-relaxed custom-scrollbar whitespace-pre-wrap select-text max-h-[50vh]">
+              {previewModal.content}
+            </div>
+
+            <div className="flex justify-end gap-2 pt-3 border-t border-slate-800 mt-3">
+              <button
+                onClick={() => setPreviewModal(null)}
+                className="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-slate-200 bg-slate-900/60 border border-slate-800 transition-all cursor-pointer"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(previewModal.content);
+                  setPreviewModal(null);
+                }}
+                className="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-white bg-amber-600 hover:bg-amber-500 transition-all flex items-center gap-1.5 shadow-md cursor-pointer"
+              >
+                <ContentCopyIcon className="text-xs" />
+                <span>Copy Code</span>
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

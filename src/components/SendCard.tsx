@@ -53,19 +53,19 @@ const getFileClass = (fileName: string) => {
 const getBorderClass = (fileClass: string) => {
   switch (fileClass) {
     case "file-pdf":
-      return "border-l-yellow-600/40 hover:border-l-yellow-600";
+      return "border-l-rose-500/60 hover:border-l-rose-500";
     case "file-zip":
-      return "border-l-amber-600/40 hover:border-l-amber-600";
+      return "border-l-purple-500/60 hover:border-l-purple-500";
     case "file-image":
-      return "border-l-amber-700/40 hover:border-l-amber-700";
+      return "border-l-cyan-500/60 hover:border-l-cyan-500";
     case "file-audio":
-      return "border-l-yellow-600/40 hover:border-l-yellow-600";
+      return "border-l-emerald-500/60 hover:border-l-emerald-500";
     case "file-video":
-      return "border-l-yellow-700/40 hover:border-l-yellow-700";
+      return "border-l-orange-500/60 hover:border-l-orange-500";
     case "file-code":
-      return "border-l-amber-800/40 hover:border-l-amber-800";
+      return "border-l-amber-500/60 hover:border-l-amber-500";
     default:
-      return "border-l-amber-700/40 hover:border-l-amber-700";
+      return "border-l-amber-500/40 hover:border-l-amber-500";
   }
 };
 
@@ -213,8 +213,8 @@ export default function SendCard() {
     setStatusMessage("Connecting to secure server...");
 
     try {
-      // 1. Generate unique 6-character alphanumeric code
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      // 1. Generate unique 6-digit numeric security code
+      const chars = "0123456789";
       let code = "";
       for (let i = 0; i < 6; i++) {
         code += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -285,7 +285,6 @@ export default function SendCard() {
       }, 800);
     } catch (err: any) {
       console.error("Upload error details:", err);
-      // Determine user friendly messages if they didn't fill credentials
       if (
         err.message &&
         (err.message.includes("fetch") ||
@@ -297,7 +296,7 @@ export default function SendCard() {
       } else {
         setError(
           err.message ||
-          "Failed to upload files. Check your bucket RLS settings and try again.",
+            "Failed to upload files. Check your bucket RLS settings and try again.",
         );
       }
       setStatus("idle");
@@ -317,19 +316,6 @@ export default function SendCard() {
     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
-  const getShareLink = () => {
-    if (typeof window !== "undefined") {
-      return `${window.location.origin}?code=${generatedCode}`;
-    }
-    return "";
-  };
-
-  const copyLinkToClipboard = () => {
-    navigator.clipboard.writeText(getShareLink());
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2000);
-  };
-
   const copyCodeToClipboard = () => {
     navigator.clipboard.writeText(generatedCode);
     setCopiedCode(true);
@@ -339,7 +325,7 @@ export default function SendCard() {
   return (
     <div className="w-full flex flex-col items-center">
       {error && (
-        <div className="flex items-center gap-2 text-[11px] font-bold text-rose-400 bg-rose-950/20 border border-rose-900/40 p-3 sm:p-3.5 rounded-2xl w-full mb-4 text-center justify-center animate-shake">
+        <div className="flex items-center gap-2 text-[11px] font-bold text-rose-400 bg-rose-950/30 border border-rose-900/50 p-3 sm:p-3.5 rounded-2xl w-full mb-4 text-center justify-center animate-shake">
           <ErrorOutlineIcon className="text-sm text-rose-400 flex-shrink-0" />
           <span>{error}</span>
         </div>
@@ -352,10 +338,11 @@ export default function SendCard() {
           onDragLeave={handleDrag}
           onDrop={handleDrop}
           onClick={triggerFileInput}
-          className={`w-full border-2 border-dashed rounded-3xl p-8 sm:p-10 flex flex-col items-center justify-center cursor-pointer transition-all duration-500 group relative overflow-hidden ${dragActive
-              ? "border-amber-700 bg-amber-700/5 shadow-[0_0_40px_rgba(180,83,9,0.02)] scale-[0.99]"
-              : "border-stone-800 hover:border-amber-700 hover:bg-stone-800/10 shadow-sm"
-            }`}
+          className={`w-full border-2 border-dashed rounded-3xl p-8 sm:p-10 flex flex-col items-center justify-center cursor-pointer transition-all duration-500 group relative overflow-hidden ${
+            dragActive
+              ? "border-amber-500 bg-amber-500/10 shadow-[0_0_40px_rgba(245,158,11,0.15)] scale-[0.99]"
+              : "border-slate-800 hover:border-amber-500/60 hover:bg-slate-900/40 shadow-sm"
+          }`}
         >
           <input
             type="file"
@@ -364,12 +351,13 @@ export default function SendCard() {
             multiple
             className="hidden"
           />
-          <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-stone-900/60 flex items-center justify-center mb-5 sm:mb-6 border border-stone-800 shadow-sm group-hover:scale-105 transition-all duration-300">
+          <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-slate-900/80 flex items-center justify-center mb-5 sm:mb-6 border border-slate-800 shadow-md group-hover:scale-105 group-hover:border-amber-500/40 transition-all duration-300">
             <CloudUploadIcon
-              className={`text-2xl sm:text-3xl transition-all duration-300 ${dragActive
-                  ? "text-amber-600 scale-110 animate-bounce"
-                  : "text-slate-500 group-hover:text-amber-600"
-                }`}
+              className={`text-2xl sm:text-3xl transition-all duration-300 ${
+                dragActive
+                  ? "text-amber-400 scale-110 animate-bounce"
+                  : "text-slate-400 group-hover:text-amber-400"
+              }`}
             />
           </div>
           <h3 className="text-sm sm:text-base font-bold mb-1.5 text-slate-100">
@@ -377,7 +365,7 @@ export default function SendCard() {
           </h3>
           <p className="text-[11px] sm:text-xs text-slate-400 text-center max-w-[260px] font-semibold leading-relaxed">
             or click to browse your files. Max{" "}
-            <span className="text-amber-600 font-bold">10MB</span> per file.
+            <span className="text-amber-400 font-bold">50MB</span> per file.
           </p>
         </div>
       )}
@@ -394,7 +382,7 @@ export default function SendCard() {
                 setStatus("idle");
                 setError(null);
               }}
-              className="text-[11px] sm:text-xs font-bold text-slate-400 hover:text-amber-600 transition-colors cursor-pointer"
+              className="text-[11px] sm:text-xs font-bold text-slate-400 hover:text-amber-400 transition-colors cursor-pointer"
             >
               Clear all
             </button>
@@ -426,7 +414,7 @@ export default function SendCard() {
                   </div>
                   <button
                     onClick={() => removeFile(idx)}
-                    className="p-1 rounded-full text-slate-400 hover:text-red-400 hover:bg-stone-800 transition-all flex-shrink-0 cursor-pointer"
+                    className="p-1 rounded-full text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition-all flex-shrink-0 cursor-pointer"
                   >
                     <CloseIcon className="text-sm" />
                   </button>
@@ -436,8 +424,8 @@ export default function SendCard() {
           </div>
 
           {/* Expiry Selector and Submit */}
-          <div className="flex flex-col gap-3 sm:gap-4 border-t border-stone-800/60 pt-4 sm:pt-5">
-            <div className="flex justify-between items-center bg-stone-900/50 p-2.5 sm:p-3 rounded-2xl border border-stone-800/60 shadow-inner">
+          <div className="flex flex-col gap-3 sm:gap-4 border-t border-slate-800/80 pt-4 sm:pt-5">
+            <div className="flex justify-between items-center bg-slate-950/60 p-2.5 sm:p-3 rounded-2xl border border-slate-800/80 shadow-inner">
               <span className="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-wider pl-1">
                 Expiry
               </span>
@@ -446,10 +434,11 @@ export default function SendCard() {
                   <button
                     key={opt}
                     onClick={() => setExpiry(opt)}
-                    className={`px-2.5 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-[10px] font-bold rounded-xl transition-all cursor-pointer ${expiry === opt
-                        ? "bg-stone-800 text-amber-600 border border-stone-700/80 shadow-sm"
-                        : "text-slate-400 hover:text-slate-200 hover:bg-stone-800/50"
-                      }`}
+                    className={`px-2.5 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-[10px] font-bold rounded-xl transition-all cursor-pointer ${
+                      expiry === opt
+                        ? "bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm"
+                        : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
+                    }`}
                   >
                     {opt === "10m"
                       ? "10 Min"
@@ -495,8 +484,8 @@ export default function SendCard() {
                 cx="50%"
                 cy="50%"
                 r="45%"
-                stroke="var(--accent)"
-                className="fill-none transition-all duration-300 drop-shadow-[0_2px_4px_rgba(249,115,22,0.15)]"
+                stroke="#f59e0b"
+                className="fill-none transition-all duration-300 drop-shadow-[0_0_12px_rgba(245,158,11,0.5)]"
                 strokeWidth="5"
                 strokeDasharray={2 * Math.PI * 48}
                 strokeDashoffset={2 * Math.PI * 48 * (1 - uploadProgress / 100)}
@@ -511,14 +500,14 @@ export default function SendCard() {
           <h3 className="text-sm sm:text-base font-bold text-slate-200 mb-1.5">
             Uploading Transfer Package
           </h3>
-          <p className="text-[9px] sm:text-[10px] text-slate-400 font-mono tracking-widest uppercase animate-pulse">
+          <p className="text-[9px] sm:text-[10px] text-amber-400 font-mono tracking-widest uppercase animate-pulse">
             {statusMessage}
           </p>
 
-          <div className="w-full bg-stone-800/60 h-1.5 rounded-full mt-6 sm:mt-8 border border-stone-800/40 overflow-hidden shadow-inner">
+          <div className="w-full bg-slate-900/80 h-1.5 rounded-full mt-6 sm:mt-8 border border-slate-800 overflow-hidden shadow-inner">
             <div
               style={{ width: `${uploadProgress}%` }}
-              className="h-full bg-amber-700 rounded-full transition-all duration-300"
+              className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-300"
             />
           </div>
         </div>
@@ -527,21 +516,21 @@ export default function SendCard() {
       {status === "success" && (
         <div className="w-full flex flex-col items-center py-2 animate-fade-in">
           {/* Main Key Display inside a glowing glass bubble */}
-          <div className="bg-stone-900/40 w-full rounded-3xl p-5 sm:p-6 border border-stone-800/50 shadow-inner flex flex-col items-center justify-center relative overflow-hidden mb-4 sm:mb-5">
-            <span className="text-[9px] sm:text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-2">
-              Share 6-Digit Code
+          <div className="bg-slate-950/60 w-full rounded-3xl p-5 sm:p-6 border border-amber-500/30 shadow-inner flex flex-col items-center justify-center relative overflow-hidden mb-4 sm:mb-5">
+            <span className="text-[9px] sm:text-[10px] text-amber-400/80 uppercase tracking-widest font-bold mb-2">
+              Share 6-Digit Security Code
             </span>
 
             <div className="flex items-center gap-2.5 sm:gap-3 relative z-10">
-              <span className="text-3xl sm:text-4xl md:text-5xl font-black font-mono tracking-widest text-amber-600 drop-shadow-[0_2px_4px_rgba(180,83,9,0.05)]">
+              <span className="text-3xl sm:text-4xl md:text-5xl font-black font-mono tracking-widest text-amber-400 drop-shadow-[0_0_20px_rgba(245,158,11,0.35)]">
                 {generatedCode.slice(0, 3)} {generatedCode.slice(3)}
               </span>
               <button
                 onClick={copyCodeToClipboard}
-                className="p-2 sm:p-2.5 rounded-xl bg-stone-800 border border-stone-700/80 hover:border-stone-600 hover:text-amber-600 active:scale-95 transition-all text-slate-400 cursor-pointer shadow-sm"
+                className="p-2 sm:p-2.5 rounded-xl bg-slate-900 border border-slate-700/80 hover:border-amber-500 hover:text-amber-400 active:scale-95 transition-all text-slate-400 cursor-pointer shadow-sm"
               >
                 {copiedCode ? (
-                  <CheckIcon className="text-amber-600 text-sm" />
+                  <CheckIcon className="text-amber-400 text-sm" />
                 ) : (
                   <ContentCopyIcon className="text-sm" />
                 )}
@@ -549,7 +538,7 @@ export default function SendCard() {
             </div>
 
             <p className="text-[9px] sm:text-[10px] text-slate-400 mt-3 sm:mt-4 flex items-center gap-1.5 font-bold uppercase tracking-wider">
-              <AccessTimeIcon className="text-xs text-amber-600" />
+              <AccessTimeIcon className="text-xs text-amber-400" />
               Expires in{" "}
               <span className="font-mono text-slate-200 font-black">
                 {formatTimeLeft(timeLeft)}
@@ -565,13 +554,13 @@ export default function SendCard() {
                 onClick={() => setShowQr(!showQr)}
                 className="text-[10px] sm:text-[11px] text-slate-400 hover:text-slate-200 font-bold uppercase tracking-wider transition-colors flex items-center gap-1.5 py-2 cursor-pointer"
               >
-                <QrCodeIcon className="text-sm text-amber-600" />
+                <QrCodeIcon className="text-sm text-amber-400" />
                 <span>{showQr ? "Hide QR Code" : "Show QR Code"}</span>
               </button>
 
               {showQr && (
-                <div className="mt-2 sm:mt-2.5 p-3 rounded-3xl bg-stone-900/50 border border-stone-850 flex flex-col items-center shadow-md animate-scale-up">
-                  <div className="p-2 sm:p-2.5 bg-white rounded-2xl border border-stone-900/85 shadow-sm">
+                <div className="mt-2 sm:mt-2.5 p-3 rounded-3xl bg-slate-950/80 border border-slate-800 flex flex-col items-center shadow-lg animate-scale-up">
+                  <div className="p-2 sm:p-2.5 bg-white rounded-2xl border border-slate-900 shadow-sm">
                     <canvas
                       ref={qrCanvasRef}
                       className="w-[110px] h-[110px] sm:w-[130px] sm:h-[130px] block"
@@ -590,7 +579,7 @@ export default function SendCard() {
                 setStatus("idle");
                 setError(null);
               }}
-              className="mt-2 sm:mt-3 w-full h-11 sm:h-12 rounded-2xl border border-stone-800 hover:border-stone-700 bg-stone-900/30 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white transition-all cursor-pointer"
+              className="mt-2 sm:mt-3 w-full h-11 sm:h-12 rounded-2xl border border-slate-800 hover:border-slate-700 bg-slate-900/50 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white transition-all cursor-pointer"
             >
               Send Another File
             </button>

@@ -25,9 +25,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="h-screen overflow-hidden flex flex-col bg-[#f8fafc]">
+      <body className="h-screen overflow-hidden flex flex-col bg-[#0b0f19] relative text-slate-100">
+        {/* Global 5% Dark Tint Overlay Layer */}
+        <div className="fixed inset-0 bg-black/5 pointer-events-none z-40" />
         <Header />
-        <main className="flex-1 overflow-hidden relative w-full">
+        <main className="flex-1 overflow-hidden relative w-full z-10">
           {children}
         </main>
         <Footer />
